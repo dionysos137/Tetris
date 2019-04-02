@@ -1,27 +1,43 @@
 from CONSTANTS import *
 import pygame
 import copy
+import numpy as np
 from pygame.locals import *
 
 class Board():
-    def __init__(self):
-        grid = []
-        for i in range(BOARDHEIGHT):
-            grid.append([BLANK]*BOARDWIDTH)
-        self.grid = grid
-        self.gridBackup = None
+    def __init__(self,h, w, pieceSize):
+        # construct the abstract layer which encodes which point is occupied
+        # 1 | 0 | 1
+        # 1 | 0 | 1
+        # 1 | 1 | 1
+        full = np.ones([h+2*pieceSize, w+2*pieceSize])
+        full[:h+pieceSize, pieceSize:w+pieceSize] = 0
+        self.height = h
+        self.width = w
+        self.abstractLayer = full
+        self.pieceSize = pieceSize
 
+        # the physicalLayer will encode the color info which will be drawn on the screen
+        self.physicalLayer = np.zeros([h+2*pieceSize, w+2*pieceSize])
+        self.abstractLayerBackup = None
+        self.physicalLayerBackup = None
 
     def update(self, piece):
-        print('sb')
-        self.gridBackup = copy.deepcopy(self.grid)
-        for x in range(TEMPLATEWIDTH):
-            for y in range(TEMPLATEHEIGHT):
-                if piece.structure[y][x] != BLANK:
-                    self.grid[piece.y +y][piece.x + x] = piece.color
+        self.abstractLayerBackup = copy.deepcopy(self.abstractLayer)
+        self.physicalLayerBackup = copy.deepcopy(self.physicalLayerBackup)
+        pieceSize = piece.structure.shape[0]
+        self.abstractLayer[pieceSize+piece.y:piece.y+2*pieceSize, pieceSize+piece.x:piece.x+2*pieceSize] = piece.structure
+        self.physicalLayer[pieceSize+piece.y:piece.y+2*pieceSize, pieceSize+piece.x:piece.x+2*pieceSize] = piece.colored
+
+    def get_board(self):
+        """get the w*h part of the physical layer
+                """
+
+        return self.physicalLayer[self.pieceSize:self.pieceSize+self.height, self.pieceSize:self.pieceSize+self.width]
 
     def restore(self):
-        self.grid =copy.deepcopy(self.gridBackup)
+        self.abstractLayer = copy.deepcopy(self.abstractLayer)
+        self.physicalLayer = copy.deepcopy(self.physicalLayer)
 
     def draw(self, canvas):
         # draw the border around the board
@@ -31,14 +47,15 @@ class Board():
         # fill the background of the board
         pygame.draw.rect(canvas, BGCOLOR, (XMARGIN, TOPMARGIN, BOXSIZE * BOARDWIDTH, BOXSIZE * BOARDHEIGHT))
         # draw the individual boxes on the board
-        for x in range(BOARDWIDTH):
-            for y in range(BOARDHEIGHT):
-                if self.grid[y][x] != BLANK:
+        boardToDraw = self.get_board()
+        for x in range(self.width):
+            for y in range(self.height):
+                if boardToDraw[y, x] != 0:
                     pixelX = XMARGIN + x * BOXSIZE
                     pixelY = TOPMARGIN + y * BOXSIZE
-                    pygame.draw.rect(canvas, COLORS[self.grid[y][x]],(pixelX + 1, pixelY + 1, BOXSIZE - 1, BOXSIZE - 1))
+                    pygame.draw.rect(canvas, COLORS[boardToDraw[y, x]+1],(pixelX + 1, pixelY + 1, BOXSIZE - 1, BOXSIZE - 1))
                     # draw shadow
-                    pygame.draw.rect(canvas, COLORS[self.grid[y][x]],(pixelX + 1, pixelY + 1, BOXSIZE - 4, BOXSIZE - 4))
+                    pygame.draw.rect(canvas, COLORS[boardToDraw[y, x]+1],(pixelX + 1, pixelY + 1, BOXSIZE - 4, BOXSIZE - 4))
 
     def cancellingLine(self):
         pass

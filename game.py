@@ -7,7 +7,7 @@ import pygame
 import sys
 from pygame.locals import *
 
-FallFreq = 0.2
+FallFreq = 0.3
 
 def run_game(screen):
 
@@ -46,27 +46,26 @@ def run_game(screen):
                 # move
                 elif event.key == K_LEFT and fallingPiece.isValidPosition(board,'L'):
                     fallingPiece.move_left()
-                    print("left")
+
 
                 elif event.key == K_RIGHT and fallingPiece.isValidPosition(board, 'R'):
                     fallingPiece.move_right()
-                    print("right")
+
 
                 elif event.key == K_DOWN and fallingPiece.isValidPosition(board, 'D'):
                     fallingPiece.move_down()
-                    print("down")
                     lastFallTime = time.time()
 
         if time.time() - lastFallTime > FallFreq and fallingPiece.isValidPosition(board, 'D'):
             fallingPiece.move_down()
-            print('down')
+
             lastFallTime = time.time()
 
         # if it reach the bottom
-        if not fallingPiece.isValidPosition(board, 'D'):
-            board.update(fallingPiece)
-            score = score + board.cancellingLine()
-            #level, FallFreq = difficulty(score)
+        # if not fallingPiece.isValidPosition(board, 'D'):
+        #     board.update(fallingPiece)
+        #     score = score + board.cancellingLine()
+        #     #level, FallFreq = difficulty(score)
 
 
         screen.fill(BGCOLOR)
