@@ -10,7 +10,7 @@ class Board():
         # 1 | 0 | 1
         # 1 | 0 | 1
         # 1 | 1 | 1
-        full = np.ones([h+2*pieceSize, w+2*pieceSize])
+        full = np.ones([h+2*pieceSize, w+2*pieceSize], dtype='int')
         full[:h+pieceSize, pieceSize:w+pieceSize] = 0
         self.height = h
         self.width = w
@@ -18,13 +18,13 @@ class Board():
         self.pieceSize = pieceSize
 
         # the physicalLayer will encode the color info which will be drawn on the screen
-        self.physicalLayer = np.zeros([h+2*pieceSize, w+2*pieceSize])
+        self.physicalLayer = np.zeros([h+2*pieceSize, w+2*pieceSize], dtype='int')
         self.abstractLayerBackup = None
         self.physicalLayerBackup = None
 
     def update(self, piece):
         self.abstractLayerBackup = copy.deepcopy(self.abstractLayer)
-        self.physicalLayerBackup = copy.deepcopy(self.physicalLayerBackup)
+        self.physicalLayerBackup = copy.deepcopy(self.physicalLayer)
         pieceSize = piece.structure.shape[0]
         self.abstractLayer[pieceSize+piece.y:piece.y+2*pieceSize, pieceSize+piece.x:piece.x+2*pieceSize] = piece.structure
         self.physicalLayer[pieceSize+piece.y:piece.y+2*pieceSize, pieceSize+piece.x:piece.x+2*pieceSize] = piece.colored
@@ -36,8 +36,8 @@ class Board():
         return self.physicalLayer[self.pieceSize:self.pieceSize+self.height, self.pieceSize:self.pieceSize+self.width]
 
     def restore(self):
-        self.abstractLayer = copy.deepcopy(self.abstractLayer)
-        self.physicalLayer = copy.deepcopy(self.physicalLayer)
+        self.abstractLayer = copy.deepcopy(self.abstractLayerBackup)
+        self.physicalLayer = copy.deepcopy(self.physicalLayerBackup)
 
     def draw(self, canvas):
         # draw the border around the board
@@ -53,9 +53,9 @@ class Board():
                 if boardToDraw[y, x] != 0:
                     pixelX = XMARGIN + x * BOXSIZE
                     pixelY = TOPMARGIN + y * BOXSIZE
-                    pygame.draw.rect(canvas, COLORS[boardToDraw[y, x]+1],(pixelX + 1, pixelY + 1, BOXSIZE - 1, BOXSIZE - 1))
+                    pygame.draw.rect(canvas, COLORS[boardToDraw[y, x]-1],(pixelX + 1, pixelY + 1, BOXSIZE - 1, BOXSIZE - 1))
                     # draw shadow
-                    pygame.draw.rect(canvas, COLORS[boardToDraw[y, x]+1],(pixelX + 1, pixelY + 1, BOXSIZE - 4, BOXSIZE - 4))
+                    pygame.draw.rect(canvas, COLORS[boardToDraw[y, x]-1],(pixelX + 1, pixelY + 1, BOXSIZE - 4, BOXSIZE - 4))
 
     def cancellingLine(self):
         pass

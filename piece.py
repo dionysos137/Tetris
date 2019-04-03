@@ -157,31 +157,7 @@ class Piece():
         colored[colored == 1] = self.color
         self.colored = colored
 
-    def isNotCollide(self, newX, newY, board):
-        isNotCollide = True
-        for x in range(TEMPLATEWIDTH):
-            for y in range(TEMPLATEHEIGHT):
-                if self.structure[y][x] != BLANK:
-                    print(newY +y)
-                    if board.grid[newY + y][newX + x] != BLANK:
-                        isNotCollide = False
-                        break
-        return isNotCollide
 
-    def isOnBoard(self, newX, newY):
-        isOnBoard = True
-        for x in range(TEMPLATEWIDTH):
-            for y in range(TEMPLATEHEIGHT):
-                if self.structure[y][x] != BLANK and newX + x < 0:
-                    isOnBoard = False
-                    break
-                if self.structure[y][x] != BLANK and newX + x > BOARDWIDTH-1:
-                    isOnBoard = False
-                    break
-                if self.structure[y][x] != BLANK and newY + y > BOARDHEIGHT-1:
-                    isOnBoard = False
-                    break
-        return isOnBoard
 
     def isValidPosition(self, board, dir):
         """
@@ -194,25 +170,26 @@ class Piece():
             #coordinate after (hypethetically) move to the left
             newX = self.x - 1
             newY = self.y
-            if self.isOnBoard(newX, newY):
-                if self.isNotCollide(newX, newY, board):
-                    return True
 
-        if dir == "R":
+
+        elif dir == "R":
             # coordinate after (hypethetically) move to the right
             newX = self.x + 1
             newY = self.y
-            if self.isOnBoard(newX, newY):
-                if self.isNotCollide(newX, newY, board):
-                    return True
 
-        if dir == "D":
+
+        elif dir == "D":
             # coordinate after (hypethetically) move to the left
             newX = self.x
             newY = self.y + 1
-            if self.isOnBoard(newX, newY):
-                if self.isNotCollide(newX, newY, board):
-                    return True
+
+        newLayer = copy.deepcopy(board.abstractLayer)
+        newLayer[board.pieceSize + newY:2 * board.pieceSize + newY,
+        board.pieceSize + newX:2 * board.pieceSize + newX] += self.structure
+        if np.any(newLayer > 1):
+            return False
+        else:
+            return True
 
 
 

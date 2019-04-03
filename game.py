@@ -8,11 +8,15 @@ import sys
 from pygame.locals import *
 
 FallFreq = 0.3
+BOARDWIDTH = 10
+BOARDHEIGHT = 20
+TEMPLATEWIDTH = 5
+TEMPLATEHEIGHT = 5
 
 def run_game(screen):
 
     # initialize the board
-    board = Board()
+    board = Board(BOARDHEIGHT, BOARDWIDTH, TEMPLATEHEIGHT)
     # initialize two pieces
     fallingPiece = Piece()
     nextPiece = Piece()
@@ -44,13 +48,11 @@ def run_game(screen):
                     [lastFallTime, lastMoveDown, lastMoveSidewaysTime] = [time.time()]*3
 
                 # move
-                elif event.key == K_LEFT and fallingPiece.isValidPosition(board,'L'):
+                elif event.key == K_LEFT and fallingPiece.isValidPosition(board, 'L'):
                     fallingPiece.move_left()
-
 
                 elif event.key == K_RIGHT and fallingPiece.isValidPosition(board, 'R'):
                     fallingPiece.move_right()
-
 
                 elif event.key == K_DOWN and fallingPiece.isValidPosition(board, 'D'):
                     fallingPiece.move_down()
@@ -58,7 +60,6 @@ def run_game(screen):
 
         if time.time() - lastFallTime > FallFreq and fallingPiece.isValidPosition(board, 'D'):
             fallingPiece.move_down()
-
             lastFallTime = time.time()
 
         # if it reach the bottom
