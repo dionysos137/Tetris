@@ -24,7 +24,7 @@ def main():
     #     pygame.mixer.music.play(-1, 0.0)
     #     run_game()
     #     pygame.mixer.music.stop()
-    #     displayTextScreen('Game Over')
+    displayTextScreen('Game Over')
 
 
 if __name__ == "__main__":

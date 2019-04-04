@@ -60,4 +60,19 @@ class Board():
                     pygame.draw.rect(canvas, COLORS[boardToDraw[y, x]-1],(pixelX + 1, pixelY + 1, BOXSIZE - 4, BOXSIZE - 4))
 
     def cancellingLine(self):
-        pass
+        num_full_lines = 0
+        board = copy.deepcopy(self.abstractLayer[self.pieceSize:self.pieceSize+self.height,
+                              self.pieceSize:self.pieceSize+self.width])
+        for i in reversed(range(self.height)):
+            if np.all(board[i, :] == 1):
+                self.abstractLayer = np.delete(self.abstractLayer, i + self.pieceSize, axis=0)
+                self.abstractLayer = np.insert(self.abstractLayer, self.pieceSize,
+                                               np.array([1]*self.pieceSize+[0]*self.width+ [1]*self.pieceSize),axis=0)
+                self.physicalLayer = np.delete(self.physicalLayer, i + self.pieceSize, axis=0)
+                self.physicalLayer = np.insert(self.physicalLayer, 0,
+                                               np.array([0]*(self.width+2*self.pieceSize)), axis=0)
+
+
+
+
+

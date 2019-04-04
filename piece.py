@@ -158,7 +158,6 @@ class Piece():
         self.colored = colored
 
 
-
     def isValidPosition(self, board, dir):
         """
 
@@ -170,22 +169,31 @@ class Piece():
             #coordinate after (hypethetically) move to the left
             newX = self.x - 1
             newY = self.y
+            structure = copy.deepcopy(self.structure)
 
 
         elif dir == "R":
             # coordinate after (hypethetically) move to the right
             newX = self.x + 1
             newY = self.y
+            structure = copy.deepcopy(self.structure)
 
 
         elif dir == "D":
             # coordinate after (hypethetically) move to the left
             newX = self.x
             newY = self.y + 1
+            structure = copy.deepcopy(self.structure)  
+
+        elif dir == "S":
+            newX = self.x
+            newY = self.y
+            structure = copy.deepcopy(PIECES[self.shape][(self.state+1) % len(PIECES[self.shape])])
+            print(structure)
 
         newLayer = copy.deepcopy(board.abstractLayer)
         newLayer[board.pieceSize + newY:2 * board.pieceSize + newY,
-        board.pieceSize + newX:2 * board.pieceSize + newX] += self.structure
+        board.pieceSize + newX:2 * board.pieceSize + newX] += structure
         if np.any(newLayer > 1):
             return False
         else:
@@ -202,5 +210,9 @@ class Piece():
     def move_down(self):
         self.y += 1
 
-
-
+    def rotate(self):
+        self.state = (self.state+1) % len(PIECES[self.shape])
+        self.structure = copy.deepcopy(PIECES[self.shape][self.state])
+        colored = copy.deepcopy(self.structure)
+        colored[colored == 1] = self.color
+        self.colored = colored

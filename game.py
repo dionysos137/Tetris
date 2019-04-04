@@ -58,6 +58,9 @@ def run_game(screen):
                     fallingPiece.move_down()
                     lastFallTime = time.time()
 
+                elif event.key == K_UP: #and fallingPiece.isValidPosition(board, 'S'): # rotation
+                    fallingPiece.rotate()
+
         if time.time() - lastFallTime > FallFreq and fallingPiece.isValidPosition(board, 'D'):
             fallingPiece.move_down()
             lastFallTime = time.time()
@@ -77,9 +80,10 @@ def run_game(screen):
             board.draw(screen)
             board.restore()
         else:
-            print(board.abstractLayer)
+            #print(board.abstractLayer)
             board.update(fallingPiece)
             fallingPiece = None
+            board.cancellingLine()
         #board.draw(screen)
         pygame.display.update()
 
