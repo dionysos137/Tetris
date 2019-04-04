@@ -30,7 +30,7 @@ def run_game(screen):
             nextPiece = Piece()
             lastFallTime = time.time() #?
             # if the fallingPiece cannot fall anymore, game is over
-            if not fallingPiece.isValidPosition(board):
+            if not fallingPiece.isValidPosition(board, 'D'):
                 return
 
         # keyboard event
@@ -70,9 +70,17 @@ def run_game(screen):
 
 
         screen.fill(BGCOLOR)
-        board.update(fallingPiece)
-        board.draw(screen)
-        board.restore()
+
+        if fallingPiece.isValidPosition(board, 'D'):
+            board.save()
+            board.update(fallingPiece)
+            board.draw(screen)
+            board.restore()
+        else:
+            print(board.abstractLayer)
+            board.update(fallingPiece)
+            fallingPiece = None
+        #board.draw(screen)
         pygame.display.update()
 
 

@@ -22,12 +22,14 @@ class Board():
         self.abstractLayerBackup = None
         self.physicalLayerBackup = None
 
-    def update(self, piece):
+
+    def save(self):
         self.abstractLayerBackup = copy.deepcopy(self.abstractLayer)
         self.physicalLayerBackup = copy.deepcopy(self.physicalLayer)
+    def update(self, piece):
         pieceSize = piece.structure.shape[0]
-        self.abstractLayer[pieceSize+piece.y:piece.y+2*pieceSize, pieceSize+piece.x:piece.x+2*pieceSize] = piece.structure
-        self.physicalLayer[pieceSize+piece.y:piece.y+2*pieceSize, pieceSize+piece.x:piece.x+2*pieceSize] = piece.colored
+        self.abstractLayer[pieceSize+piece.y:piece.y+2*pieceSize, pieceSize+piece.x:piece.x+2*pieceSize] += piece.structure
+        self.physicalLayer[pieceSize+piece.y:piece.y+2*pieceSize, pieceSize+piece.x:piece.x+2*pieceSize] += piece.colored
 
     def get_board(self):
         """get the w*h part of the physical layer
